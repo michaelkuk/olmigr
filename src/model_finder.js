@@ -14,11 +14,19 @@ const getAvailableModels = async () => {
   const avaiableModels = files.map((file) => {
     const name = manifestPathToName(file.name, file.parentPath);
     const manifest = JSON.parse(
-      fs.readFileSync(path.resolve(file.parentPath, file.name)),
+      fs.readFileSync(path.resolve(file.parentPath, file.name)).toString(),
     );
 
     const blobs = manifest.layers.map((l) =>
       path.resolve(OLLAMA_MODEL_DIR, "blobs", l.digest.replace(":", "-")),
+    );
+
+    blobs.push(
+      path.resolve(
+        OLLAMA_MODEL_DIR,
+        "blobs",
+        manifest.config.digest.replace(":", "-"),
+      ),
     );
 
     return {

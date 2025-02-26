@@ -14,6 +14,8 @@ if [ "$#" -lt 2 ]; then
     exit 1
 fi
 
+set -eo pipefail
+
 MANIFEST="$1"
 BASE_IMAGE="$2"
 OUTPUT_DIR="${3:-.}"  # Defaults to current directory if not provided.
@@ -42,7 +44,7 @@ while IFS= read -r filename || [ -n "$filename" ]; do
     docker pull "$IMAGE_TAG" || { echo "Failed to pull image '${IMAGE_TAG}'"; continue; }
 
     echo "Creating container from image '${IMAGE_TAG}'..."
-    container_id=$(docker create "$IMAGE_TAG")
+    container_id=$(docker create "$IMAGE_TAG" "/bin/sh")
     if [ -z "$container_id" ]; then
         echo "Error: Failed to create container from image '${IMAGE_TAG}'."
         continue
